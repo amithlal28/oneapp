@@ -18,8 +18,9 @@ import '../sizes.dart';
 import '../widgets/toast.dart';
 
 class AddFeatures extends StatefulWidget {
-  const AddFeatures({Key? key}) : super(key: key);
+  const AddFeatures({Key? key, this.edit=false}) : super(key: key);
 
+  final bool edit;
   @override
   State<AddFeatures> createState() => _AddFeaturesState();
 }
@@ -32,13 +33,19 @@ class _AddFeaturesState extends State<AddFeatures> {
     initialPage: 0,
   );
   DatabaseMethods databaseMethods= DatabaseMethods();
+  late Future getAppFeatures;
 
   List<FeatureData> featureData=[];
 
   @override
   void initState() {
     fToast.init(context);
-    featureData.add(FeatureData());
+    if(widget.edit){
+      getAppFeatures = databaseMethods.getAppFeatures();
+    }else{
+      featureData.add(FeatureData());
+    }
+
     super.initState();
   }
 
@@ -95,11 +102,12 @@ class _AddFeaturesState extends State<AddFeatures> {
           )
         ),
 
-        child: ListView(
+        child: widget.edit? edit():ListView(
           padding: EdgeInsets.symmetric(
             vertical: screenHeight(context, mulBy: 0.03)
           ),
-          children: [
+          children:
+          [
             const Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: 20,
@@ -153,9 +161,9 @@ setState(() {
                   if(
                   featureData.last.behaviour!=null&&
                       featureData.last.icon!=null&&
-                      featureData.last.linkController.text!=""&&
-                      featureData.last.linkController.text.isURl()&&
-                      featureData.last.nameController.text!=""
+                      featureData.last.linkController!.text!=""&&
+                      featureData.last.linkController!.text.isURl()&&
+                      featureData.last.nameController!.text!=""
                   ){
                     setState(() {
                       featureData.add(FeatureData());
@@ -199,18 +207,18 @@ setState(() {
                   if(
                   featureData.last.behaviour!=null&&
                       featureData.last.icon!=null&&
-                      featureData.last.linkController.text!=""&&
-                      featureData.last.linkController.text.isURl()&&
-                      featureData.last.nameController.text!=""
+                      featureData.last.linkController!.text!=""&&
+                      featureData.last.linkController!.text.isURl()&&
+                      featureData.last.nameController!.text!=""
                   ){
                     showLoaderDialog(context);
 
                     List<Map<String, dynamic>> dataList= featureData.map((e) => {
-                      "name":e.nameController.text,
+                      "name":e.nameController!.text,
                       "icon": e.icon,
                       "behaviour": e.behaviour,
-                      "link": e.linkController.text,
-                      "desc": e.descController.text
+                      "link": e.linkController!.text,
+                      "desc": e.descController!.text
                     }).toList();
 
 
@@ -254,21 +262,205 @@ setState(() {
       ),
     );
   }
+
+
+  Widget edit(){
+    return FutureBuilder(
+      future: getAppFeatures,
+      builder: (context, snapshot) {
+        
+        if (snapshot.hasData) {
+          return ListView(
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight(context, mulBy: 0.03)
+            ),
+            children:
+            [
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: Text(
+                  "Edit Your\nFeatures",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: screenHeight(context, mulBy: 0.03),
+              ),
+
+              SizedBox(
+                height: screenHeight(context, mulBy: 0.67),
+                child: PageView.builder(
+                  controller: pageController,
+
+                  itemBuilder: (BuildContext context, int index) {
+                    return Feature(
+                      featureData: [...snapshot.data.docs.map((e) => FeatureData(
+                        icon: e["icon"],
+                        behaviour: e["behaviour"],
+                        descController: TextEditingController(text: e["desc"]),
+                        linkController: TextEditingController(text: e["link"]),
+                        nameController: TextEditingController(text: e["name"])
+                      )),...featureData,][index],
+                      count: featureData.length,
+                      onClose: (){
+                        setState(() {
+                          featureData.removeAt(index);
+
+                        });                      },
+                    );
+                  },
+                  onPageChanged: (int page) {
+                    selectedIndex.value = page;
+                  },
+                  itemCount: [...snapshot.data.docs,...featureData,].length,
+                ),
+              ),
+              CirclePageIndicator(
+                itemCount: [...snapshot.data.docs,...featureData,].length,
+                currentPageNotifier: selectedIndex,
+              ),
+              SizedBox(
+                height: screenHeight(context, mulBy: 0.03),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: InkWell(
+                  onTap: (){
+                    if(
+                    featureData.last.behaviour!=null&&
+                        featureData.last.icon!=null&&
+                        featureData.last.linkController!.text!=""&&
+                        featureData.last.linkController!.text.isURl()&&
+                        featureData.last.nameController!.text!=""
+                    ){
+                      setState(() {
+                        featureData.add(FeatureData());
+                        pageController.animateToPage([...snapshot.data.docs,...featureData,].length-1, duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                      });
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
+                          "Fill all the contents"
+                      )));
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: const Color(0xff6353C0),
+                    ),
+                    height: 60,
+                    width: screenWidth(context, mulBy: 0.6),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      "Add new Feature",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: screenHeight(context, mulBy: 0.03),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: InkWell(
+                  onTap: (){
+                    if(
+                    featureData.last.behaviour!=null&&
+                        featureData.last.icon!=null&&
+                        featureData.last.linkController!.text!=""&&
+                        featureData.last.linkController!.text.isURl()&&
+                        featureData.last.nameController!.text!=""
+                    ){
+                      showLoaderDialog(context);
+
+                      List<Map<String, dynamic>> dataList= featureData.map((e) => {
+                        "name":e.nameController!.text,
+                        "icon": e.icon,
+                        "behaviour": e.behaviour,
+                        "link": e.linkController!.text,
+                        "desc": e.descController!.text
+                      }).toList();
+
+
+                      databaseMethods.addAppFeatures(dataList).then((value) {
+                        Navigator.pop(context);
+                        showToast(text: "App created", icon: Icons.check);
+                        Navigator.of(context,).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home(),), (Route<dynamic> route) => false);
+                      });
+
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
+                          "Fill all the contents"
+                      )));
+                    }
+
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.white,
+                        border: Border.all(
+                            color: const Color(0xff6958D8),
+                            width: 2
+                        )
+                    ),
+                    height: 60,
+                    alignment: Alignment.center,
+                    child: const Text(
+                      "Save",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Color(0xff464AD9),
+                          fontSize: 20
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
+        );
+      },
+    );
+  }
+
 }
 
 
 class FeatureData{
 
   String? icon, behaviour;
-  TextEditingController nameController= TextEditingController();
-  TextEditingController linkController= TextEditingController();
-  TextEditingController descController= TextEditingController();
+  TextEditingController? nameController= TextEditingController();
+  TextEditingController? linkController= TextEditingController();
+  TextEditingController? descController= TextEditingController();
 
   FeatureData(
       {
         //TODO
     this.icon="",
     this.behaviour,
+        this.nameController,
+        this.descController,
+        this.linkController
   }
   );
 }
@@ -342,7 +534,7 @@ class _FeatureState extends State<Feature> {
                         ),
                         clipBehavior: Clip.antiAlias,
                         padding: EdgeInsets.all(10),
-                        child: widget.featureData.linkController.text==""?const Icon(
+                        child: widget.featureData.linkController!.text==""?const Icon(
                           Icons.image,
                           color: Color(0xff2a2a2a),
                           size: 35,
@@ -464,8 +656,8 @@ class _FeatureState extends State<Feature> {
                   keyboardType: TextInputType.multiline,
                   style: const TextStyle(color: Colors.white),
                   onTap: (){
-                    if(widget.featureData.linkController.text==""){
-                      widget.featureData.linkController.text="https://";
+                    if(widget.featureData.linkController!.text==""){
+                      widget.featureData.linkController!.text="https://";
                     }
                   },
                   onChanged: (String s) async {
@@ -473,7 +665,7 @@ class _FeatureState extends State<Feature> {
                     log(s.isURl().toString());
                     if(s.isURl()) {
                       try{
-                        await FaviconFinder.getBest(widget.featureData.linkController.text).then((value) {
+                        await FaviconFinder.getBest(widget.featureData.linkController!.text).then((value) {
                           setState(() {
                             widget.featureData.icon = value!.url;
                           });
