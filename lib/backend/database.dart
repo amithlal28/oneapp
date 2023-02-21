@@ -46,6 +46,13 @@ class DatabaseMethods {
         .catchError((e) {});
   } //used
 
+  getMyApps() async {
+    return FirebaseFirestore.instance
+        .collection("Apps")
+    .where("owner", isEqualTo: user!.uid)
+        .get()
+        .catchError((e) {});
+  } //used
 
   getAppFeatures() async {
 
