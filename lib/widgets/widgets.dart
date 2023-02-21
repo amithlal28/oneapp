@@ -87,10 +87,13 @@ class MyButtonOutline extends StatelessWidget {
   }
 }
 
+
+
 class MyIcon extends StatelessWidget {
-  const MyIcon({Key? key, required this.appInfo}) : super(key: key);
+  const MyIcon({Key? key, required this.appInfo, this.edit=false}) : super(key: key);
 
   final DocumentSnapshot appInfo;
+  final bool edit;
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +109,17 @@ class MyIcon extends StatelessWidget {
 
         Navigator.of(context,).push(MaterialPageRoute(builder: (context) => AppMain(),));
       },
+      onLongPress: edit?(){
+        showModalBottomSheet(context: context,
+          builder: (context) {
+          return Container(
+            height: screenHeight(context, mulBy: 0.3),
+           decoration: BoxDecoration(
+             color: Colors.redAccent,
+           ),
+          );
+        },);
+      }:null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -117,14 +131,19 @@ class MyIcon extends StatelessWidget {
               boxShadow: [BoxShadow()],
               color: Colors.white
             ),
-            padding: EdgeInsets.all(10),
+            clipBehavior: Clip.antiAlias,
             margin: EdgeInsets.only(
               bottom: 5
             ),
             child: Hero(
               tag: appInfo.id,
-              child: Image.asset(
-                appInfo["icon"]+".png"
+              child: Image.network(
+                appInfo["icon"],
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.error, color: Colors.redAccent, size: 30,);
+                },
+
               ),
             ),
           ),
@@ -274,6 +293,9 @@ extension EmailValidator on String {
             r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
         .hasMatch(this);
   }
+
+  bool isURl(){
+    return  Uri.tryParse(this+"/")?.hasAbsolutePath?? false;  }
 }
 
 extension StringExtension on String {
