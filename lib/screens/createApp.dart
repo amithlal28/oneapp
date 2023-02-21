@@ -123,9 +123,7 @@ class _CreateAppState extends State<CreateApp> {
                                 spreadRadius: 5,
                                 offset: Offset(0, 5)
                             ),],
-                          border: Border.all(
-                            color: Colors.white
-                          ),
+                         
                           color: const Color(0xff796AD7)
                       ),
                       clipBehavior: Clip.antiAlias,
