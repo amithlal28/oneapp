@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:one_app/screens/addFeatures.dart';
 
 import 'auth.dart';
 import 'branchProvider.dart';
@@ -46,18 +47,55 @@ class DatabaseMethods {
     }
   } //used
 
-  Future<void> updateAppFeatures(List data) async {
-    for (var element in data) {
+  Future<void> updateAppFeatures({required List<FeatureData> featureData, required List<String> deleted}) async {
+
+    for (var e in deleted) {
       FirebaseFirestore.instance
           .collection("Apps")
           .doc(dataChild.appid)
           .collection("Features")
-          .doc(element["id"])
-      .update(element)
+          .doc(e)
+      .delete()
           .catchError((e) {
         log(e.toString());
       });
     }
+
+    for (var e in featureData) {
+
+      Map<String, dynamic> map= {
+        "name":e.nameController!.text,
+        "icon": e.icon,
+        "behaviour": e.behaviour,
+        "link": e.linkController!.text,
+        "desc": e.descController!.text
+      };
+      if(e.id==null){
+
+        FirebaseFirestore.instance
+            .collection("Apps")
+            .doc(dataChild.appid)
+            .collection("Features")
+            .add(map)
+            .catchError((e) {
+          log(e.toString());
+        });
+      }else{
+        FirebaseFirestore.instance
+            .collection("Apps")
+            .doc(dataChild.appid)
+            .collection("Features")
+            .doc(e.id)
+            .update(map)
+            .catchError((e) {
+          log(e.toString());
+        });
+      }
+
+
+    }
+
+
   } //used
 
   getApps() async {
