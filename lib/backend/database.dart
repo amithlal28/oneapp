@@ -25,6 +25,13 @@ class DatabaseMethods {
         .catchError((e) {});
   } //used
 
+  editApp(data) async {
+    return FirebaseFirestore.instance
+        .collection("Apps")
+        .doc(dataChild.appid)
+    .update(data)
+        .catchError((e) {});
+  } //used
 
   Future<void> addAppFeatures(List data) async {
     for (var element in data) {
@@ -35,6 +42,20 @@ class DatabaseMethods {
           .add(element)
           .catchError((e) {
             log(e.toString());
+      });
+    }
+  } //used
+
+  Future<void> updateAppFeatures(List data) async {
+    for (var element in data) {
+      FirebaseFirestore.instance
+          .collection("Apps")
+          .doc(dataChild.appid)
+          .collection("Features")
+          .doc(element["id"])
+      .update(element)
+          .catchError((e) {
+        log(e.toString());
       });
     }
   } //used
