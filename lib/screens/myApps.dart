@@ -79,30 +79,28 @@ class _MyAppsState extends State<MyApps> {
           SizedBox(
             height: screenHeight(context, mulBy: 0.05),
           ),
-          Expanded(
-              child: FutureBuilder(
-                future: getMyApps,
-                builder: (context, snapshot) {
-                  if(snapshot.hasData){
-                    return Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      alignment: WrapAlignment.start,
-                      runAlignment: WrapAlignment.start,
-                      spacing: 20,
-                      runSpacing: 20,
-                      children: snapshot.data.docs.map<Widget>((e) => MyIcon(
-                          appInfo: e,
-                        edit: true,
-                      )).toList(),
-                    );
-                  }
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                    ),
-                  );
-                },
-              )
+          FutureBuilder(
+            future: getMyApps,
+            builder: (context, snapshot) {
+              if(snapshot.hasData){
+                return Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.start,
+                  alignment: WrapAlignment.start,
+                  runAlignment: WrapAlignment.start,
+                  spacing: 20,
+                  runSpacing: 20,
+                  children: snapshot.data.docs.map<Widget>((e) => MyIcon(
+                      appInfo: e,
+                    edit: true,
+                  )).toList(),
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              );
+            },
           ),
         ],
       ),
