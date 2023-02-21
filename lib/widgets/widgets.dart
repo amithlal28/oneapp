@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:one_app/backend/data.dart';
 import 'package:one_app/screens/appMainScreen.dart';
+import 'package:one_app/screens/createApp.dart';
 import '../sizes.dart';
 
 class Logo extends StatelessWidget {
@@ -50,7 +51,7 @@ class MyButton extends StatelessWidget {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.white,
               fontSize: 20
           ),
@@ -75,7 +76,7 @@ class MyButtonOutline extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
             color: Colors.white,
           border: Border.all(
-            color: Color(0xff464AD9),
+            color: const Color(0xff464AD9),
             width: 2
           )
         ),
@@ -107,16 +108,54 @@ class MyIcon extends StatelessWidget {
         dataChild.private= appInfo["private"];
         dataChild.appid= appInfo.id;
 
-        Navigator.of(context,).push(MaterialPageRoute(builder: (context) => AppMain(),));
+        Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const AppMain(),));
       },
       onLongPress: edit?(){
         showModalBottomSheet(context: context,
           builder: (context) {
           return Container(
-            height: screenHeight(context, mulBy: 0.3),
-           decoration: BoxDecoration(
-             color: Colors.redAccent,
+            height: 150,
+           decoration: const BoxDecoration(
+             color: Color(0xff2a2a2a),
            ),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: screenHeight(context, mulBy: 0.02),
+                ),
+
+                SizedBox(
+                  height: screenHeight(context, mulBy: 0.01),
+                ),
+                ListTile(
+                  title: Text("Edit", style: TextStyle(color: Colors.white, fontSize: 18),),
+                  leading: Icon(Icons.edit, color: Colors.white,),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 25
+                  ),
+                  onTap: (){
+                    dataChild.icon= appInfo["icon"];
+                    dataChild.name= appInfo["name"];
+                    dataChild.category= appInfo["category"];
+                    dataChild.desc= appInfo["desc"];
+                    dataChild.owner= appInfo["owner"];
+                    dataChild.private= appInfo["private"];
+                    dataChild.appid= appInfo.id;
+
+                    Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const CreateApp(
+                      edit: true,
+                    ),));
+                  },
+                ),
+                const ListTile(
+                  title: Text("Delete", style: TextStyle(color: Colors.white, fontSize: 18),),
+                  leading: Icon(Icons.delete, color: Colors.white,),
+                  contentPadding: EdgeInsets.symmetric(
+                      horizontal: 25
+                  ),
+                ),
+              ],
+            ),
           );
         },);
       }:null,
@@ -128,11 +167,11 @@ class MyIcon extends StatelessWidget {
             width: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              boxShadow: [BoxShadow()],
+              boxShadow: [const BoxShadow()],
               color: Colors.white
             ),
             clipBehavior: Clip.antiAlias,
-            margin: EdgeInsets.only(
+            margin: const EdgeInsets.only(
               bottom: 5
             ),
             child: Hero(
@@ -155,7 +194,7 @@ class MyIcon extends StatelessWidget {
               maxLines: 2,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 14
               ),
@@ -192,7 +231,7 @@ class MyHomeButton extends StatelessWidget {
                   end: Alignment.centerRight
               ),
             boxShadow: [
-              BoxShadow(
+              const BoxShadow(
                   color: Colors.black12,
                 blurRadius: 5,
                 spreadRadius: 5,
@@ -277,8 +316,8 @@ showLoaderDialog(BuildContext context) {
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
-      return Center(
-        child: const CircularProgressIndicator(
+      return const Center(
+        child: CircularProgressIndicator(
           color: Colors.white,
 
         ),
