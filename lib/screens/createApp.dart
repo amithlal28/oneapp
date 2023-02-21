@@ -14,8 +14,9 @@ import '../backend/auth.dart';
 import '../sizes.dart';
 
 class CreateApp extends StatefulWidget {
-  const CreateApp({Key? key}) : super(key: key);
+  const CreateApp({Key? key, this.edit=false}) : super(key: key);
 
+  final bool edit;
   @override
   State<CreateApp> createState() => _CreateAppState();
 }
@@ -37,6 +38,15 @@ class _CreateAppState extends State<CreateApp> {
 
       });
     });
+
+    if(widget.edit){
+      nameController.text=dataChild.name!;
+      iconController.text=dataChild.icon!;
+      descController.text=dataChild.desc!;
+      private=dataChild.private!;
+      category=dataChild.category!;
+    }
+
     super.initState();
   }
 
@@ -88,8 +98,8 @@ class _CreateAppState extends State<CreateApp> {
             vertical: screenHeight(context, mulBy: 0.03)
           ),
           children: [
-            const Text(
-              "Create\nYour App",
+            Text(
+              widget.edit?"Edit\nYour App":"Create\nYour App",
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 30,
@@ -123,7 +133,7 @@ class _CreateAppState extends State<CreateApp> {
                                 spreadRadius: 5,
                                 offset: Offset(0, 5)
                             ),],
-                         
+
                           color: const Color(0xff796AD7)
                       ),
                       clipBehavior: Clip.antiAlias,
@@ -317,7 +327,8 @@ class _CreateAppState extends State<CreateApp> {
                 if(
                     nameController.text!=""&&
                     descController.text!=""&&
-                //icon!=""&&
+                iconController.text!=""&&
+                        iconController.text.isURl()&&
                 category!=null
                 ){
                   showLoaderDialog(context);
@@ -331,8 +342,25 @@ class _CreateAppState extends State<CreateApp> {
                     "private": private
                   };
 
+                  if(widget.edit) {
+                    databaseMethods.editApp(data).then((value) {
+                      dataChild.icon= data["icon"];
+                      dataChild.name= data["name"];
+                      dataChild.category= data["category"];
+                      dataChild.desc= data["desc"];
+                      dataChild.owner= data["owner"];
+                      dataChild.private= data["private"];
+                      Navigator.of(context).pop();
 
-                  databaseMethods.addApp(data).then((value) {
+                      Navigator.of(context,).pushReplacement(MaterialPageRoute(builder: (context) => const AddFeatures(
+                        edit:true
+                      ),));
+
+                    }
+
+                    );
+                  }else{
+                    databaseMethods.addApp(data).then((value) {
                     dataChild.appid=value.id;
                     dataChild.icon= data["icon"];
                     dataChild.name= data["name"];
@@ -344,7 +372,10 @@ class _CreateAppState extends State<CreateApp> {
 
                     Navigator.of(context,).pushReplacement(MaterialPageRoute(builder: (context) => const AddFeatures(),));
 
-                  });
+                  }
+
+                  );
+                  }
                 }else{
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
                       "Fill all the contents"
