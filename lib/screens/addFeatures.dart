@@ -57,9 +57,9 @@ class _AddFeaturesState extends State<AddFeatures> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff6958D8),
+      backgroundColor: const Color(0xff2a2a2a),
       appBar: AppBar(
-        backgroundColor: const Color(0xff6958D8),
+        backgroundColor: const Color(0xff2a2a2a),
         elevation: 0,
         leading: IconButton(
           onPressed: (){
@@ -101,8 +101,8 @@ class _AddFeaturesState extends State<AddFeatures> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             colors: [
-              Color(0xff6958D8),
-              Color(0xff4530B3)
+              Color(0xff2a2a2a),
+              Color(0xff1a1a1a)
             ]
           )
         ),
@@ -187,7 +187,7 @@ setState(() {
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: const Color(0xff6353C0),
+                      color: const Color(0xff444444),
                   ),
                   height: 60,
                   width: screenWidth(context, mulBy: 0.6),
@@ -249,7 +249,7 @@ setState(() {
                       borderRadius: BorderRadius.circular(30),
                       color: Colors.white,
                       border: Border.all(
-                          color: const Color(0xff6958D8),
+                          color: const Color(0xff2a2a2a),
                           width: 2
                       )
                   ),
@@ -379,7 +379,7 @@ setState(() {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: const Color(0xff6353C0),
+                      color: const Color(0xff444444),
                     ),
                     height: 60,
                     width: screenWidth(context, mulBy: 0.6),
@@ -434,7 +434,7 @@ setState(() {
                         borderRadius: BorderRadius.circular(30),
                         color: Colors.white,
                         border: Border.all(
-                            color: const Color(0xff6958D8),
+                            color: const Color(0xff2a2a2a),
                             width: 2
                         )
                     ),
@@ -507,7 +507,7 @@ class _FeatureState extends State<Feature> {
         Container(
           height: screenHeight(context, mulBy: 0.64),
           decoration: BoxDecoration(
-            color: const Color(0xff796AD6),
+            color: const Color(0xff3d3d3d) ,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               const BoxShadow(
@@ -596,7 +596,7 @@ class _FeatureState extends State<Feature> {
                         enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.white, width: 1.0),
                             borderRadius: BorderRadius.circular(10)),
-                        fillColor: const Color(0xff796AD7),
+                        fillColor: const Color(0xff4c4c4c),
                         filled: true,
                         hintText: "Feature Name",
                         hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
@@ -630,7 +630,7 @@ class _FeatureState extends State<Feature> {
                       border: Border.all(
                           color: Colors.white
                       ),
-                      color: const Color(0xff796AD7)
+                      color: const Color(0xff4c4c4c)
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: DropdownButton<String>(
@@ -645,7 +645,7 @@ class _FeatureState extends State<Feature> {
                     underline: const SizedBox(),
                     isExpanded: true,
                     value: widget.featureData.behaviour,
-                    dropdownColor: const Color(0xff8478D2),
+                    dropdownColor: const Color(0xff606060),
                     borderRadius: BorderRadius.circular(10),
                     onChanged: (a) {
                       setState(() {
@@ -705,7 +705,7 @@ class _FeatureState extends State<Feature> {
                     enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.white, width: 1.0),
                         borderRadius: BorderRadius.circular(20)),
-                    fillColor: const Color(0xff796AD7),
+                    fillColor: const Color(0xff4c4c4c),
                     filled: true,
                     hintText: "Feature Link",
                     hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
@@ -749,7 +749,7 @@ class _FeatureState extends State<Feature> {
                     enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.white, width: 1.0),
                         borderRadius: BorderRadius.circular(20)),
-                    fillColor: const Color(0xff796AD7),
+                    fillColor: const Color(0xff4c4c4c),
                     filled: true,
                     hintText: "App Description",
                     hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),

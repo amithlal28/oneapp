@@ -35,9 +35,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffCFF1F1),
+      backgroundColor: const Color(0xff2a2a2a),
       appBar: AppBar(
-        backgroundColor: const Color(0xffCFF1F1),
+        backgroundColor: const Color(0xff2a2a2a),
         elevation: 0,
 
         actions: [
@@ -82,8 +82,8 @@ class _HomeState extends State<Home> {
         ],
       ),
       drawer: const Drawer(),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xff251B5C),
+      floatingActionButton: FloatingActionButton (
+        backgroundColor: const Color(0xff1a1818),
         onPressed: (){
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -128,8 +128,8 @@ class _HomeState extends State<Home> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xff6857D7),
-            Color(0xff4934B7),
+            Color(0xff3b3b3b),
+            Color(0xff2d2d2d),
           ]
         )
       ),
@@ -142,7 +142,7 @@ class _HomeState extends State<Home> {
               width: 140,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: const Color(0xff483C97)
+                color: const Color(0xff2d2d2d),
               ),
             ),
           ),
