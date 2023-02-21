@@ -36,6 +36,7 @@ class _AddFeaturesState extends State<AddFeatures> {
   late Future getAppFeatures;
 
   List<FeatureData> featureData=[];
+  List<String> deletedID=[];
 
   @override
   void initState() {
@@ -43,7 +44,11 @@ class _AddFeaturesState extends State<AddFeatures> {
     if(widget.edit){
       getAppFeatures = databaseMethods.getAppFeatures();
     }else{
-      featureData.add(FeatureData());
+      featureData.add(FeatureData(
+          nameController: TextEditingController(),
+          linkController: TextEditingController(),
+          descController: TextEditingController()
+      ));
     }
 
     super.initState();
@@ -166,7 +171,11 @@ setState(() {
                       featureData.last.nameController!.text!=""
                   ){
                     setState(() {
-                      featureData.add(FeatureData());
+                      featureData.add(FeatureData(
+                        nameController: TextEditingController(),
+                        linkController: TextEditingController(),
+                        descController: TextEditingController()
+                      ));
                       pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
                     });
                   }else{
@@ -268,8 +277,24 @@ setState(() {
     return FutureBuilder(
       future: getAppFeatures,
       builder: (context, snapshot) {
-        
+
         if (snapshot.hasData) {
+
+          if(featureData.isEmpty){
+            featureData=[
+              ...snapshot.data.docs.map((e) =>
+              FeatureData(
+                descController: TextEditingController(text: e["desc"]),
+                linkController: TextEditingController(text: e["link"]),
+                nameController: TextEditingController(text: e["name"]),
+                behaviour: e["behaviour"],
+                icon: e["icon"],
+                id: e.id
+              )
+              )
+            ];
+          }
+
           return ListView(
             padding: EdgeInsets.symmetric(
                 vertical: screenHeight(context, mulBy: 0.03)
@@ -300,29 +325,27 @@ setState(() {
 
                   itemBuilder: (BuildContext context, int index) {
                     return Feature(
-                      featureData: [...snapshot.data.docs.map((e) => FeatureData(
-                        icon: e["icon"],
-                        behaviour: e["behaviour"],
-                        descController: TextEditingController(text: e["desc"]),
-                        linkController: TextEditingController(text: e["link"]),
-                        nameController: TextEditingController(text: e["name"])
-                      )),...featureData,][index],
+                      featureData: featureData[index],
                       count: featureData.length,
                       onClose: (){
+                        if(featureData[index].id!=null){
+                          deletedID.add(featureData[index].id!);
+                        }
                         setState(() {
                           featureData.removeAt(index);
 
-                        });                      },
+                        });
+                        },
                     );
                   },
                   onPageChanged: (int page) {
                     selectedIndex.value = page;
                   },
-                  itemCount: [...snapshot.data.docs,...featureData,].length,
+                  itemCount: featureData.length,
                 ),
               ),
               CirclePageIndicator(
-                itemCount: [...snapshot.data.docs,...featureData,].length,
+                itemCount: featureData.length,
                 currentPageNotifier: selectedIndex,
               ),
               SizedBox(
@@ -340,8 +363,12 @@ setState(() {
                         featureData.last.nameController!.text!=""
                     ){
                       setState(() {
-                        featureData.add(FeatureData());
-                        pageController.animateToPage([...snapshot.data.docs,...featureData,].length-1, duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+                        featureData.add(FeatureData(
+                            nameController: TextEditingController(),
+                            linkController: TextEditingController(),
+                            descController: TextEditingController()
+                        ));
+                        pageController.animateToPage(featureData.length-1, duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
                       });
                     }else{
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(
@@ -387,18 +414,11 @@ setState(() {
                     ){
                       showLoaderDialog(context);
 
-                      List<Map<String, dynamic>> dataList= featureData.map((e) => {
-                        "name":e.nameController!.text,
-                        "icon": e.icon,
-                        "behaviour": e.behaviour,
-                        "link": e.linkController!.text,
-                        "desc": e.descController!.text
-                      }).toList();
+                      log(featureData.length.toString());
 
-
-                      databaseMethods.addAppFeatures(dataList).then((value) {
+                      databaseMethods.updateAppFeatures(featureData: featureData, deleted: deletedID).then((value) {
                         Navigator.pop(context);
-                        showToast(text: "App created", icon: Icons.check);
+                        showToast(text: "App updated", icon: Icons.check);
                         Navigator.of(context,).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home(),), (Route<dynamic> route) => false);
                       });
 
@@ -448,7 +468,7 @@ setState(() {
 
 class FeatureData{
 
-  String? icon, behaviour;
+  String? icon, behaviour, id;
   TextEditingController? nameController= TextEditingController();
   TextEditingController? linkController= TextEditingController();
   TextEditingController? descController= TextEditingController();
@@ -460,7 +480,8 @@ class FeatureData{
     this.behaviour,
         this.nameController,
         this.descController,
-        this.linkController
+        this.linkController,
+        this.id
   }
   );
 }
