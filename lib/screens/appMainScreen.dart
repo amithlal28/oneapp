@@ -76,7 +76,7 @@ class _AppMainState extends State<AppMain> {
                   height: screenHeight(context, mulBy: 0.35),
                   width: screenWidth(context, mulBy: 0.55),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(55),
+                      borderRadius: BorderRadius.circular(35),
                       boxShadow: const [BoxShadow()],
                       color: Colors.white),
                   padding: const EdgeInsets.all(10),
@@ -85,7 +85,21 @@ class _AppMainState extends State<AppMain> {
                     children: [
                       Hero(
                         tag: dataChild.appid,
-                        child: Image.asset(dataChild.icon! + ".png"),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: SizedBox(
+                            width: screenWidth(context, mulBy: 0.35),
+                            height: screenHeight(context, mulBy: 0.2),
+                            child: Image.network(
+                              dataChild.icon!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.error, color: Colors.redAccent, size: 30,);
+                              },
+
+                            ),
+                          ),
+                        ),
                       ),
                       Text(
                         dataChild.name!,
@@ -249,10 +263,16 @@ class _FeaturesState extends State<Features> {
             horizontal: screenWidth(context, mulBy: 0.07),
             vertical: screenHeight(context, mulBy: 0.02)),
         expandedAlignment: Alignment.centerLeft,
-        leading: Image.asset(
-          widget.featureInfo["icon"] + ".png",
-          color: Colors.white.withOpacity(0.7),
-          height: 45,
+        leading: SizedBox(
+          height: 40,
+          child: Image.network(
+            widget.featureInfo["icon"],
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(Icons.error, color: Colors.redAccent, size: 30,);
+            },
+
+          ),
         ),
         trailing: ElevatedButton(
             onPressed: onTap,
