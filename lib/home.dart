@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:one_app/screens/createApp.dart';
 import 'package:one_app/screens/myApps.dart';
+import 'package:one_app/screens/store.dart';
 import 'package:one_app/screens/welcome.dart';
 import 'package:one_app/sizes.dart';
 import 'package:one_app/widgets/widgets.dart';
@@ -217,7 +218,9 @@ class _HomeState extends State<Home> {
                 )
               ],
             ),
-            onTap: (){}
+            onTap: (){
+              Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const Store(),));
+            }
         ),
         SizedBox(
           height: screenHeight(context, mulBy: 0.05),
