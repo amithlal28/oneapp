@@ -99,6 +99,7 @@ class DatabaseMethods {
   } //used
 
   getApps() async {
+
     return FirebaseFirestore.instance
         .collection("Apps")
         .get()
