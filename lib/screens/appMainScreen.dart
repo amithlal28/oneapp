@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,13 +26,18 @@ class _AppMainState extends State<AppMain> {
   TextEditingController descController = TextEditingController();
   bool private = false;
   String? icon = "", category;
-  late Future getAppFeatures;
+  late Future<List> getAppFeatures;
   DatabaseMethods databaseMethods = DatabaseMethods();
   ScrollController scrollController = ScrollController();
 
+
+
   @override
   void initState() {
-    getAppFeatures = databaseMethods.getAppFeatures();
+    getAppFeatures = Future.wait([
+      databaseMethods.getAppFeatures(),
+      Future.delayed(const Duration(seconds: 3), () {})
+    ]);
     super.initState();
   }
 
@@ -119,18 +125,24 @@ class _AppMainState extends State<AppMain> {
                   return ListView.builder(
                     controller: scrollController,
                     shrinkWrap: true,
-                    itemCount: snapshot.data.docs.length,
+                    itemCount: snapshot.data![0].docs.length,
                     itemBuilder: (context, index) {
                       return Features(
-                        featureInfo: snapshot.data.docs[index],
+                        featureInfo: snapshot.data![0].docs[index],
                         selected: 0 == index,
                       );
                     },
                   );
                 }
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: LinearProgressIndicator(
+                      minHeight: 20,
+
+                      color: Colors.green,
+                      backgroundColor: Colors.lightGreenAccent.withOpacity(0.2),
+                    ),
                   ),
                 );
               },
