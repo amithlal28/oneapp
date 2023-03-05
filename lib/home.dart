@@ -1,5 +1,7 @@
 
 
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:one_app/screens/createApp.dart';
@@ -24,12 +26,15 @@ class _HomeState extends State<Home> {
 
   final PanelController pc = PanelController();
   AuthMethods authMethods = AuthMethods();
-  late Future getApps;
+  late Future<List> getApps;
   DatabaseMethods databaseMethods= DatabaseMethods();
 
   @override
   void initState() {
-    getApps= databaseMethods.getApps();
+    getApps= Future.wait([
+      databaseMethods.getPersonInfo(),
+      databaseMethods.getApps(),
+    ]);
     super.initState();
   }
 
@@ -161,9 +166,23 @@ class _HomeState extends State<Home> {
                       runAlignment: WrapAlignment.start,
                       spacing: 20,
                       runSpacing: 20,
-                      children: snapshot.data.docs.map<Widget>((e) => MyIcon(
-                        appInfo: e
-                      )).toList(),
+                      children: snapshot.data![1].docs.map<Widget>((e) {
+
+                        // snapshot.data![0]["apps"].forEach(
+                        //         (a){
+                        //           log(e.id);
+                        //           log(a);
+                        //           log((a==e.id).toString());
+                        //         }
+                        // );
+                        if(snapshot.data![0]["apps"].contains(e.id)) {
+                          return MyIcon(
+                            appInfo: e
+                        );
+                        }else {
+                          return SizedBox();
+                        }
+                      }).toList(),
                     );
                   }
                   return CircularProgressIndicator(
