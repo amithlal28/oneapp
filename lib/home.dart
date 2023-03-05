@@ -11,6 +11,7 @@ import 'package:one_app/screens/welcome.dart';
 import 'package:one_app/sizes.dart';
 import 'package:one_app/widgets/widgets.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:collection/collection.dart';
 
 import 'backend/auth.dart';
 import 'backend/database.dart';
@@ -32,7 +33,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     getApps= Future.wait([
-      databaseMethods.getPersonInfo(),
+      databaseMethods.getPersonInfo().then((value) => currApps=value["apps"]),
       databaseMethods.getApps(),
     ]);
     super.initState();
@@ -122,8 +123,8 @@ class _HomeState extends State<Home> {
       clipBehavior: Clip.antiAlias,
       padding: EdgeInsets.only(
           top: screenHeight(context, mulBy: 0.03),
-          left: screenWidth(context, mulBy: 0.08),
-        right: screenWidth(context, mulBy: 0.08)
+          left: screenWidth(context, mulBy: 0.055),
+        right: screenWidth(context, mulBy: 0.055)
       ),
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -156,32 +157,23 @@ class _HomeState extends State<Home> {
             height: 30,
           ),
           Expanded(
-              child: FutureBuilder(
-                future: getApps,
+              child: FutureBuilder<List>(
+                future: Future.wait([
+                  databaseMethods.getPersonInfo().then((value) => currApps=value["apps"]),
+                  databaseMethods.getApps(),
+                ]),
                 builder: (context, snapshot) {
                   if(snapshot.hasData){
                     return Wrap(
                       crossAxisAlignment: WrapCrossAlignment.start,
-                      alignment: WrapAlignment.start,
+                      alignment: WrapAlignment.spaceBetween,
                       runAlignment: WrapAlignment.start,
-                      spacing: 20,
                       runSpacing: 20,
-                      children: snapshot.data![1].docs.map<Widget>((e) {
-
-                        // snapshot.data![0]["apps"].forEach(
-                        //         (a){
-                        //           log(e.id);
-                        //           log(a);
-                        //           log((a==e.id).toString());
-                        //         }
-                        // );
-                        if(snapshot.data![0]["apps"].contains(e.id)) {
-                          return MyIcon(
+                      spacing: 20,
+                      children: (snapshot.data![1].docs.where((e)=> currApps.contains(e.id))).map<Widget>((e) {
+                        return MyIcon(
                             appInfo: e
                         );
-                        }else {
-                          return SizedBox();
-                        }
                       }).toList(),
                     );
                   }
@@ -237,8 +229,8 @@ class _HomeState extends State<Home> {
                 )
               ],
             ),
-            onTap: (){
-              Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const Store(),));
+            onTap: () async {
+              await Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const Store(),)).then((value) => setState((){}));
             }
         ),
         SizedBox(
@@ -263,8 +255,8 @@ class _HomeState extends State<Home> {
                 )
               ],
             ),
-            onTap: (){
-              Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const MyApps(),));
+            onTap: () async {
+              await Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const MyApps(),)).then((value) => setState((){}));
             }
         ),
       ],
