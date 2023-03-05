@@ -11,6 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../widgets/toast.dart';
 
 User? user;
+List currApps=[];
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
