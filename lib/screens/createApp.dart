@@ -265,7 +265,7 @@ class _CreateAppState extends State<CreateApp> {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: DropdownButton<String>(
-                items: <String>['Education', 'Health', 'Store'].map((String value) {
+                items: <String>['Commerce','Education', 'Health', 'Social'].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value, style: const TextStyle(color: Colors.white, fontSize: 16),),
