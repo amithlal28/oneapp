@@ -104,6 +104,7 @@ class _GoogleAuthState extends State<GoogleAuth> {
                         "phone": value.user!.phoneNumber ?? "",
                         "photoURL": value.user!.photoURL!.split("=")[0],
                         "verified": value.user!.emailVerified,
+                        "apps":[]
                       };
                       databaseMethods.addUsernfo(personDataMap);
                     }
