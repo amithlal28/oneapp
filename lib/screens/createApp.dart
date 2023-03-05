@@ -369,7 +369,7 @@ class _CreateAppState extends State<CreateApp> {
                     dataChild.owner= data["owner"];
                     dataChild.private= data["private"];
                     Navigator.of(context).pop();
-
+                    databaseMethods.addUsedApp(value.id);
                     Navigator.of(context,).pushReplacement(MaterialPageRoute(builder: (context) => const AddFeatures(),));
 
                   }
