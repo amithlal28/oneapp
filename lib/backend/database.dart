@@ -19,6 +19,32 @@ class DatabaseMethods {
     });
   } //used
 
+  Future<void> addUsedApp(String a) async {
+
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user!.uid)
+        .get().then((value) {
+          currApps= value["apps"];
+    }
+    );
+
+    if(!currApps.contains(a)){
+      if(currApps.length>=8){
+        currApps.removeAt(0);
+      }
+      currApps.add(a);
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(user!.uid)
+          .update({"apps":currApps})
+          .catchError((e) {
+        log(e.toString());
+      });
+    }
+
+  } //used
+
    addApp(data) async {
     return FirebaseFirestore.instance
         .collection("Apps")
