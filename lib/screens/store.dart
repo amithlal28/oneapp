@@ -41,7 +41,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
 
 
           item.docs.forEach((element) {
-
+            log(element["category"]);
             if (element["category"]=="Commerce") {
               if (commerce.isEmpty) {
                 tabs++;
@@ -67,6 +67,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
           });
         }
     );
+    log(health.length.toString());
     _tabController = TabController(length: tabs, vsync: this);
     return tabs;
   }
@@ -235,17 +236,17 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                         physics: const BouncingScrollPhysics(),
                         controller: _tabController,
                         children: [
-                          if (health.isNotEmpty)
+                          if (commerce.isNotEmpty)
                             TabListView(
-                              apps: health,
+                              apps: commerce,
                             ),
                           if (education.isNotEmpty)
                             TabListView(
                               apps: education,
                             ),
-                          if (commerce.isNotEmpty)
+                          if (health.isNotEmpty)
                             TabListView(
-                              apps: commerce,
+                              apps: health,
                             ),
                           if (social.isNotEmpty)
                             TabListView(
@@ -278,27 +279,15 @@ class TabListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.only(
-          left: screenWidth(context, mulBy: 0.015),
-          right: screenWidth(context, mulBy: 0.015),
-          top: screenHeight(context, mulBy: 0.01)),
-      itemCount: apps.length,
-      itemBuilder: (context, item) {
-        return Wrap(
-          crossAxisAlignment: WrapCrossAlignment.start,
-          alignment: WrapAlignment.start,
-          runAlignment: WrapAlignment.start,
-          spacing: 20,
-          runSpacing: 20,
-          children: apps.map<Widget>((e) => MyIcon(
-              appInfo: e
-          )).toList(),
-        );
-      },
-      scrollDirection: Axis.vertical,
-      primary: false,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.start,
+      alignment: WrapAlignment.start,
+      runAlignment: WrapAlignment.start,
+      runSpacing: 20,
+      spacing: 20,
+      children: apps.map<Widget>((e) => MyIcon(
+          appInfo: e
+      )).toList(),
     );
   }
 }
