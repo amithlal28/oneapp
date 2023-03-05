@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:one_app/backend/data.dart';
 import 'package:one_app/screens/appMainScreen.dart';
 import 'package:one_app/screens/createApp.dart';
+import '../backend/database.dart';
 import '../sizes.dart';
 
 class Logo extends StatelessWidget {
@@ -91,7 +92,9 @@ class MyButtonOutline extends StatelessWidget {
 
 
 class MyIcon extends StatelessWidget {
-  const MyIcon({Key? key, required this.appInfo, this.edit=false}) : super(key: key);
+  MyIcon({Key? key, required this.appInfo, this.edit=false}) : super(key: key);
+
+  DatabaseMethods databaseMethods = DatabaseMethods();
 
   final DocumentSnapshot appInfo;
   final bool edit;
@@ -108,6 +111,7 @@ class MyIcon extends StatelessWidget {
         dataChild.private= appInfo["private"];
         dataChild.appid= appInfo.id;
 
+        databaseMethods.addUsedApp(appInfo.id);
         Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const AppMain(),));
       },
       onLongPress: edit?(){
@@ -115,6 +119,7 @@ class MyIcon extends StatelessWidget {
           builder: (context) {
           return Container(
             height: 150,
+
            decoration: const BoxDecoration(
              color: Color(0xff2a2a2a),
            ),
@@ -165,12 +170,14 @@ class MyIcon extends StatelessWidget {
           Container(
             height: 60,
             width: 60,
+
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               boxShadow: [const BoxShadow()],
               color: Colors.white
             ),
             clipBehavior: Clip.antiAlias,
+
             margin: const EdgeInsets.only(
               bottom: 5
             ),
