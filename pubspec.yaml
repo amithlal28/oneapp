@@ -46,6 +46,7 @@ dependencies:
   url_launcher: ^6.1.9
   flutter_inappwebview: ^5.7.2+3
   favicon: ^1.1.1
+  percent_indicator: ^4.0.1
 
 dev_dependencies:
   flutter_test:
