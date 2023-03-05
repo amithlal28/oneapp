@@ -102,6 +102,7 @@ class DatabaseMethods {
 
     return FirebaseFirestore.instance
         .collection("Apps")
+    .where("private", isEqualTo: false)
         .get()
         .catchError((e) {});
   } //used
@@ -138,11 +139,11 @@ class DatabaseMethods {
     });
   } //used
 
-  Stream getPersonInfo() {
+  Future getPersonInfo() {
     return FirebaseFirestore.instance
         .collection("Users")
         .doc(user!.uid)
-        .snapshots();
+        .get();
   } //used
 
 
