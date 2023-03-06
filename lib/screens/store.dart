@@ -36,7 +36,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
     commerce.clear();
     social.clear();
     tabs = 0;
-    await databaseMethods.getApps().then(
+    await databaseMethods.getPublicApps().then(
         (item){
 
 
@@ -286,7 +286,8 @@ class TabListView extends StatelessWidget {
       runSpacing: 20,
       spacing: 20,
       children: apps.map<Widget>((e) => MyIcon(
-          appInfo: e
+          appInfo: e,
+        store: true,
       )).toList(),
     );
   }
