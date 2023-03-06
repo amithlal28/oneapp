@@ -180,8 +180,9 @@ class MyIcon extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text("App Deleted."))
                           );
+                          Navigator.of(context,).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home(),), (Route<dynamic> route) => false);
                         });
-                        Navigator.of(context,).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home(),), (Route<dynamic> route) => false);
+
                       },
                     );
 
