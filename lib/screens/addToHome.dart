@@ -189,7 +189,9 @@ Navigator.pop(context);
               height: screenHeight(context, mulBy: 0.05),
             ),
             Container(
-              height: screenHeight(context, mulBy: 0.3),
+              constraints: BoxConstraints(
+                minHeight: screenHeight(context, mulBy: 0.3),
+              ),
               width: screenWidth(context, mulBy: 0.85),
               decoration: BoxDecoration(
                 color: Color(0xff3d3d3d),
