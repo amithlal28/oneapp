@@ -69,11 +69,11 @@ class DatabaseMethods {
   } //used
 
   Future deleteApp(String data) async{
-    return FirebaseFirestore.instance
+    return FirebaseFirestore.instance.runTransaction((transaction) async =>
+    await transaction.delete(FirebaseFirestore.instance
         .collection("Apps")
-        .doc(data)
-        .delete()
-        .catchError((e) {});
+        .doc(data)));
+
   }
 
   Future<void> addAppFeatures(List data) async {
