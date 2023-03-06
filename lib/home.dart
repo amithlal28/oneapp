@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
   void initState() {
     getApps= Future.wait([
       databaseMethods.getPersonInfo().then((value) => currApps=value["apps"]),
-      databaseMethods.getApps(),
+      databaseMethods.getPublicApps(),
     ]);
     super.initState();
   }
@@ -160,7 +160,7 @@ class _HomeState extends State<Home> {
               child: FutureBuilder<List>(
                 future: Future.wait([
                   databaseMethods.getPersonInfo().then((value) => currApps=value["apps"]),
-                  databaseMethods.getApps(),
+                  databaseMethods.getAllApps(),
                 ]),
                 builder: (context, snapshot) {
                   if(snapshot.hasData){
@@ -170,15 +170,17 @@ class _HomeState extends State<Home> {
                       runAlignment: WrapAlignment.start,
                       runSpacing: 20,
                       spacing: 20,
-                      children: (snapshot.data![1].docs.where((e)=> currApps.contains(e.id))).map<Widget>((e) {
+                      children: (snapshot.data![1].docs.where((e)=> (currApps.contains(e.id)||(e["owner"]==user!.uid)))).map<Widget>((e) {
                         return MyIcon(
                             appInfo: e
                         );
                       }).toList(),
                     );
                   }
-                  return CircularProgressIndicator(
-                    color: Colors.white,
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
                   );
                 },
               )
