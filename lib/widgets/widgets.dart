@@ -7,9 +7,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:one_app/backend/data.dart';
+import 'package:one_app/screens/addToHome.dart';
 import 'package:one_app/screens/appMainScreen.dart';
 import 'package:one_app/screens/createApp.dart';
 import '../backend/database.dart';
+import '../home.dart';
 import '../sizes.dart';
 
 class Logo extends StatelessWidget {
@@ -92,12 +94,12 @@ class MyButtonOutline extends StatelessWidget {
 
 
 class MyIcon extends StatelessWidget {
-  MyIcon({Key? key, required this.appInfo, this.edit=false}) : super(key: key);
+  MyIcon({Key? key, required this.appInfo, this.edit=false, this.store=false}) : super(key: key);
 
   DatabaseMethods databaseMethods = DatabaseMethods();
 
   final DocumentSnapshot appInfo;
-  final bool edit;
+  final bool edit, store;
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +113,14 @@ class MyIcon extends StatelessWidget {
         dataChild.private= appInfo["private"];
         dataChild.appid= appInfo.id;
 
-        databaseMethods.addUsedApp(appInfo.id);
-        Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const AppMain(),));
+        if(store){
+          Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const AddToHome(),));
+        }
+        else{
+          Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const AppMain(),));
+        }
+
+
       },
       onLongPress: edit?(){
         showModalBottomSheet(context: context,
@@ -152,12 +160,33 @@ class MyIcon extends StatelessWidget {
                     ),));
                   },
                 ),
-                const ListTile(
+                ListTile(
                   title: Text("Delete", style: TextStyle(color: Colors.white, fontSize: 18),),
                   leading: Icon(Icons.delete, color: Colors.white,),
                   contentPadding: EdgeInsets.symmetric(
                       horizontal: 25
                   ),
+                  onTap: (){
+                    showAlertDialog1(
+                      context: context,
+                      title: "Delete",
+                      content: "Are you sure to delete app?",
+                      noButton: () {
+                        Navigator.of(context).pop();
+                      },
+                      yesButton: () {
+                        Navigator.of(context).pop();
+                        databaseMethods.deleteApp(appInfo.id).then((value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("App Deleted."))
+                          );
+                        });
+                        Navigator.of(context,).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home(),), (Route<dynamic> route) => false);
+                      },
+                    );
+
+
+                  },
                 ),
               ],
             ),
