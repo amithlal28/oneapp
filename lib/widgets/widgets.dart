@@ -175,7 +175,9 @@ class MyIcon extends StatelessWidget {
                         Navigator.of(context).pop();
                       },
                       yesButton: () {
+
                         Navigator.of(context).pop();
+                        showLoaderDialog(context);
                         databaseMethods.deleteApp(appInfo.id).then((value) {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text("App Deleted."))
