@@ -19,7 +19,7 @@ class DatabaseMethods {
     });
   } //used
 
-  Future<void> addUsedApp(String a) async {
+  Future<void> addOneApp(String a) async {
 
     await FirebaseFirestore.instance
         .collection("Users")
@@ -29,19 +29,27 @@ class DatabaseMethods {
     }
     );
 
-    if(!currApps.contains(a)){
-      if(currApps.length>=8){
-        currApps.removeAt(0);
-      }
-      currApps.add(a);
-      FirebaseFirestore.instance
-          .collection("Users")
-          .doc(user!.uid)
-          .update({"apps":currApps})
-          .catchError((e) {
-        log(e.toString());
-      });
-    }
+    currApps.add(a);
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user!.uid)
+        .update({"apps":currApps})
+        .catchError((e) {
+      log(e.toString());
+    });
+
+  } //used
+
+  Future<void> deleteOneApp(String a) async {
+
+    currApps.remove(a);
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user!.uid)
+        .update({"apps":currApps})
+        .catchError((e) {
+      log(e.toString());
+    });
 
   } //used
 
@@ -59,6 +67,14 @@ class DatabaseMethods {
     .update(data)
         .catchError((e) {});
   } //used
+
+  Future deleteApp(String data) async{
+    return FirebaseFirestore.instance
+        .collection("Apps")
+        .doc(data)
+        .delete()
+        .catchError((e) {});
+  }
 
   Future<void> addAppFeatures(List data) async {
     for (var element in data) {
@@ -124,11 +140,17 @@ class DatabaseMethods {
 
   } //used
 
-  getApps() async {
-
+  getPublicApps() async {
     return FirebaseFirestore.instance
         .collection("Apps")
     .where("private", isEqualTo: false)
+        .get()
+        .catchError((e) {});
+  } //used
+
+  getAllApps() async {
+    return FirebaseFirestore.instance
+        .collection("Apps")
         .get()
         .catchError((e) {});
   } //used
