@@ -339,7 +339,8 @@ class _CreateAppState extends State<CreateApp> {
                     "category":category!,
                     "desc": descController.text,
                     "owner": user!.uid,
-                    "private": private
+                    "private": private,
+                    "active": "pending"
                   };
 
                   if(widget.edit) {
