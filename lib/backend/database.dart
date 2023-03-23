@@ -144,6 +144,7 @@ class DatabaseMethods {
     return FirebaseFirestore.instance
         .collection("Apps")
     .where("private", isEqualTo: false)
+        .where("active", isEqualTo: "accepted")
         .get()
         .catchError((e) {});
   } //used
