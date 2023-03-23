@@ -130,7 +130,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
 
                         RichText(
                           text: const TextSpan(
-                            text: "There is nothing to show here.\n",
+                            text: "No data found.\n",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -139,7 +139,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                             children: [
                               TextSpan(
                                 text:
-                                "Go to desired subjects to download notes.",
+                                "Try again later.",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
