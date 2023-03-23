@@ -367,28 +367,30 @@ class Description extends StatelessWidget {
                 horizontal: 15,
                 vertical: 20
             ),
-            child: Column(
-              children: [
-                Text(
-                  "${dataChild.name} Description\n",
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w700,
-
-                    color: Colors.white
-                  ),
-                ),
-                Text(
-                  dataChild.desc!,
-
-                  style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.normal,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    "${dataChild.name} Description\n",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700,
 
                       color: Colors.white
+                    ),
                   ),
-                ),
-              ],
+                  Text(
+                    dataChild.desc!,
+
+                    style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.normal,
+
+                        color: Colors.white
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
