@@ -9,5 +9,6 @@ class Data {
 
   String? name, category, desc, icon, owner;
   bool? private;
+  Map? usedFeatures;
 
 }
