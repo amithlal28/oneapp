@@ -76,6 +76,24 @@ class DatabaseMethods {
 
   }
 
+  Future<void> editSpecialFeature(List selected) async {
+
+    await FirebaseFirestore.instance
+        .collection("Apps")
+        .doc(dataChild.appid)
+        .set(
+      {"usedFeatures": {
+      user!.uid: selected
+      },
+      },
+      SetOptions(merge: true)
+    )
+        .catchError((e) {
+      log(e.toString());
+    });
+
+  } //used
+
   Future<void> addAppFeatures(List data) async {
     for (var element in data) {
       FirebaseFirestore.instance
@@ -144,7 +162,7 @@ class DatabaseMethods {
     return FirebaseFirestore.instance
         .collection("Apps")
     .where("private", isEqualTo: false)
-        .where("active", isEqualTo: "accepted")
+        .where("active", whereIn: ["accepted", "super"], )
         .get()
         .catchError((e) {});
   } //used
@@ -154,6 +172,13 @@ class DatabaseMethods {
         .collection("Apps")
         .get()
         .catchError((e) {});
+  } //used
+
+  getAppDetailStream() {
+    return FirebaseFirestore.instance
+        .collection("Apps")
+    .doc(dataChild.appid)
+    .snapshots();
   } //used
 
   getMyApps() async {
