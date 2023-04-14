@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:favicon/favicon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:one_app/backend/data.dart';
 import 'package:one_app/backend/database.dart';
 import 'package:one_app/screens/addFeatures.dart';
+import 'package:one_app/screens/customizeSpecial.dart';
 import 'package:one_app/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -30,13 +32,11 @@ class _AppMainState extends State<AppMain> {
   DatabaseMethods databaseMethods = DatabaseMethods();
   ScrollController scrollController = ScrollController();
 
-
-
   @override
   void initState() {
     getAppFeatures = Future.wait([
       databaseMethods.getAppFeatures(),
-      Future.delayed(const Duration(seconds: 3), () {})
+      Future.delayed(const Duration(seconds: 2), () {})
     ]);
     super.initState();
   }
@@ -100,9 +100,12 @@ class _AppMainState extends State<AppMain> {
                               dataChild.icon!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.error, color: Colors.redAccent, size: 30,);
+                                return const Icon(
+                                  Icons.error,
+                                  color: Colors.redAccent,
+                                  size: 30,
+                                );
                               },
-
                             ),
                           ),
                         ),
@@ -116,20 +119,76 @@ class _AppMainState extends State<AppMain> {
                   )),
             ),
             SizedBox(
-              height: screenHeight(context, mulBy: 0.05),
+              height: screenHeight(context, mulBy: 0.03),
             ),
             FutureBuilder(
               future: getAppFeatures,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return ListView.builder(
-                    controller: scrollController,
-                    shrinkWrap: true,
-                    itemCount: snapshot.data![0].docs.length,
-                    itemBuilder: (context, index) {
-                      return Features(
-                        featureInfo: snapshot.data![0].docs[index],
-                        selected: 0 == index,
+                  return StreamBuilder(
+                    stream: databaseMethods.getAppDetailStream(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot1) {
+                      if (snapshot1.hasData) {
+                        if (dataChild.owner == "SuperSpecial") {
+                          if (snapshot1.data["usedFeatures"]
+                              .containsKey(user!.uid)) {
+                            dataChild.usedFeatures![user!.uid] =
+                                snapshot1.data["usedFeatures"][user!.uid];
+                          }
+                        }
+
+                        return Column(
+                          children: [
+                            if (dataChild.owner == "SuperSpecial")
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              CustomizeSpecial(
+                                                snapshot: snapshot,
+                                              )))
+                                      .then((value) {
+                                    setState(() {});
+                                  });
+                                },
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Container(
+                                    height: 40,
+                                    width: 200,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        color: Colors.blue.shade400
+                                            .withOpacity(0.5),
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    child: const Text(
+                                      "Customize",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 17),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            SizedBox(
+                              height: screenHeight(context, mulBy: 0.02),
+                            ),
+                            getList(snapshot)
+                          ],
+                        );
+                      }
+                      return Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: LinearProgressIndicator(
+                            minHeight: 20,
+                            color: Colors.green,
+                            backgroundColor:
+                                Colors.lightGreenAccent.withOpacity(0.2),
+                          ),
+                        ),
                       );
                     },
                   );
@@ -139,7 +198,6 @@ class _AppMainState extends State<AppMain> {
                     borderRadius: BorderRadius.circular(20),
                     child: LinearProgressIndicator(
                       minHeight: 20,
-
                       color: Colors.green,
                       backgroundColor: Colors.lightGreenAccent.withOpacity(0.2),
                     ),
@@ -152,14 +210,12 @@ class _AppMainState extends State<AppMain> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             FloatingActionButton(
-              onPressed: (){
+              onPressed: () {
                 Navigator.pop(context);
               },
               heroTag: null,
@@ -168,11 +224,10 @@ class _AppMainState extends State<AppMain> {
                 Icons.home_outlined,
                 color: Colors.black,
                 size: 27,
-
               ),
             ),
             FloatingActionButton(
-              onPressed: (){
+              onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const Description(),
@@ -183,7 +238,7 @@ class _AppMainState extends State<AppMain> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               child: Icon(
-                  Icons.description_outlined,
+                Icons.description_outlined,
                 color: Colors.white.withOpacity(0.7),
                 size: 30,
               ),
@@ -191,6 +246,50 @@ class _AppMainState extends State<AppMain> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget getList(dynamic snapshot) {
+
+
+    if (dataChild.owner == "SuperSpecial") {
+      if (dataChild.usedFeatures!.containsKey(user!.uid)) {
+        log(dataChild.usedFeatures!.toString());
+        return ListView.builder(
+          controller: scrollController,
+          shrinkWrap: true,
+          itemCount: snapshot.data![0].docs.length,
+          itemBuilder: (context, index) {
+            if ((dataChild.usedFeatures![user!.uid])
+                .contains(snapshot.data![0].docs[index].id)) {
+              return Features(
+                featureInfo: snapshot.data![0].docs[index],
+                selected: 0 == index,
+              );
+            } else {
+              log(snapshot.data![0].docs[index].id);
+              for (var element
+                  in (dataChild.usedFeatures![user!.uid] as List)) {
+                log(element);
+              }
+              log("${((dataChild.usedFeatures![user!.uid]).contains(snapshot.data![0].docs[index].id))}");
+
+              return SizedBox();
+            }
+          },
+        );
+      }
+    }
+    return ListView.builder(
+      controller: scrollController,
+      shrinkWrap: true,
+      itemCount: snapshot.data![0].docs.length,
+      itemBuilder: (context, index) {
+        return Features(
+          featureInfo: snapshot.data![0].docs[index],
+          selected: 0 == index,
+        );
+      },
     );
   }
 }
@@ -206,15 +305,12 @@ class Features extends StatefulWidget {
 }
 
 class _FeaturesState extends State<Features> {
-
   final InAppBrowser browser = InAppBrowser();
-
 
   Future<void> onTap() async {
     if (await canLaunchUrl(
       Uri.parse(widget.featureInfo["link"]),
-    )){
-
+    )) {
       switch (widget.featureInfo["behaviour"]) {
         case "Deep Link":
           launchUrl(Uri.parse(widget.featureInfo["link"]),
@@ -223,37 +319,32 @@ class _FeaturesState extends State<Features> {
           break;
         case "In-App":
           browser.openUrlRequest(
-              urlRequest: URLRequest(url: Uri.parse(widget.featureInfo["link"])),
-            options: InAppBrowserClassOptions(
-              android: AndroidInAppBrowserOptions(
-                hideTitleBar: false,
-                allowGoBackWithBackButton: true,
-
-              ),
-              inAppWebViewGroupOptions: InAppWebViewGroupOptions(
-                android: AndroidInAppWebViewOptions(
-                  thirdPartyCookiesEnabled: true,
-                )
-              )
-              )
-              );
+              urlRequest:
+                  URLRequest(url: Uri.parse(widget.featureInfo["link"])),
+              options: InAppBrowserClassOptions(
+                  android: AndroidInAppBrowserOptions(
+                    hideTitleBar: false,
+                    allowGoBackWithBackButton: true,
+                  ),
+                  inAppWebViewGroupOptions: InAppWebViewGroupOptions(
+                      android: AndroidInAppWebViewOptions(
+                    thirdPartyCookiesEnabled: true,
+                  ))));
           break;
         case "External Browser":
           launchUrl(Uri.parse(widget.featureInfo["link"]),
               mode: LaunchMode.externalApplication);
           break;
       }
-
-    }else{
+    } else {
       ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Can't open the link. Link broken.", style: TextStyle(color: Colors.white),))
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+        "Can't open the link. Link broken.",
+        style: TextStyle(color: Colors.white),
+      )));
     }
-
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -277,14 +368,36 @@ class _FeaturesState extends State<Features> {
         expandedAlignment: Alignment.centerLeft,
         leading: SizedBox(
           height: 40,
-          child: Image.network(
-            widget.featureInfo["icon"],
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(Icons.error, color: Colors.redAccent, size: 30,);
-            },
-
-          ),
+          child: widget.featureInfo["icon"] == "SuperSpecial"
+              ? FutureBuilder(
+                  future: FaviconFinder.getBest(widget.featureInfo["link"]),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Image.network(
+                        snapshot.data!.url,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.error,
+                            color: Colors.redAccent,
+                            size: 30,
+                          );
+                        },
+                      );
+                    }
+                    return CircularProgressIndicator();
+                  })
+              : Image.network(
+                  widget.featureInfo["icon"],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.error,
+                      color: Colors.redAccent,
+                      size: 30,
+                    );
+                  },
+                ),
         ),
         trailing: ElevatedButton(
             onPressed: onTap,
@@ -312,7 +425,6 @@ class _FeaturesState extends State<Features> {
     );
   }
 }
-
 
 class Description extends StatelessWidget {
   const Description({Key? key}) : super(key: key);
@@ -360,34 +472,26 @@ class Description extends StatelessWidget {
                     color: Colors.black12,
                     blurRadius: 5,
                     spreadRadius: 5,
-                    offset: Offset(0, 5)
-                ),],
+                    offset: Offset(0, 5)),
+              ],
             ),
-            padding: EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 20
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Text(
                     "${dataChild.name} Description\n",
                     style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700,
-
-                      color: Colors.white
-                    ),
+                        fontSize: 25,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white),
                   ),
                   Text(
                     dataChild.desc!,
-
                     style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.normal,
-
-                        color: Colors.white
-                    ),
+                        color: Colors.white),
                   ),
                 ],
               ),
@@ -395,7 +499,6 @@ class Description extends StatelessWidget {
           ),
         ),
       ),
-
     );
   }
 }
