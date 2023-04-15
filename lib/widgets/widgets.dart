@@ -113,6 +113,10 @@ class MyIcon extends StatelessWidget {
         dataChild.private= appInfo["private"];
         dataChild.appid= appInfo.id;
 
+        if(appInfo["owner"]=="SuperSpecial"){
+          dataChild.usedFeatures= appInfo["usedFeatures"];
+        }
+
         if(store){
           Navigator.of(context,).push(MaterialPageRoute(builder: (context) => const AddToHome(),));
         }
