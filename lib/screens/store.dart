@@ -75,6 +75,11 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    searchController.addListener(() {
+      setState(() {
+
+      });
+    });
     myFuture = getApps();
   }
 
@@ -96,7 +101,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
           ),
         ),
         title: Text(
-          "OneApp STORE",
+          "One-Store",
           style: TextStyle(
             color: Colors.white
           ),
@@ -129,7 +134,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                       children: [
 
                         RichText(
-                          text: const TextSpan(
+                          text: TextSpan(
                             text: "No data found.\n",
                             style: TextStyle(
                               color: Colors.white,
@@ -137,6 +142,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                               fontWeight: FontWeight.w500,
                             ),
                             children: [
+                              if(searchController.text.isEmpty)
                               TextSpan(
                                 text:
                                 "Try again later.",
@@ -239,18 +245,22 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                           if (commerce.isNotEmpty)
                             TabListView(
                               apps: commerce,
+                              search: searchController.text,
                             ),
                           if (education.isNotEmpty)
                             TabListView(
                               apps: education,
+                              search: searchController.text,
                             ),
                           if (health.isNotEmpty)
                             TabListView(
                               apps: health,
+                              search: searchController.text,
                             ),
                           if (social.isNotEmpty)
                             TabListView(
                               apps: social,
+                              search: searchController.text,
                             ),
                         ],
                       ),
@@ -272,10 +282,12 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
 
 class TabListView extends StatelessWidget {
   List<DocumentSnapshot> apps;
+  String search;
 
   TabListView(
       {Key? key,
-        required this.apps,});
+        required this.apps,
+      required this.search});
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +297,9 @@ class TabListView extends StatelessWidget {
       runAlignment: WrapAlignment.start,
       runSpacing: 20,
       spacing: 20,
-      children: apps.map<Widget>((e) => MyIcon(
+      children: apps
+          .where((item) => item["name"].toLowerCase().contains(search.toLowerCase()))
+          .toList().map<Widget>((e) => MyIcon(
           appInfo: e,
         store: true,
       )).toList(),

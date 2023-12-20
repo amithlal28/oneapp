@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:favicon/favicon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -185,14 +187,25 @@ class _FeaturesState extends State<Features> {
         ),
         leading: SizedBox(
           height: 40,
-          child: Image.network(
-            widget.featureInfo["icon"],
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(Icons.error, color: Colors.redAccent, size: 30,);
-            },
+          child: FutureBuilder(
+              future: FaviconFinder.getBest(widget.featureInfo["link"]),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CachedNetworkImage(
+                    imageUrl: snapshot.data!.url,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.error,
+                        color: Colors.redAccent,
+                        size: 30,
+                      );
+                    },
 
-          ),
+                  );
+                }
+                return CircularProgressIndicator();
+              }),
         ),
         trailing: Icon(
           widget.selected?Icons.check_box_outlined:Icons.check_box_outline_blank,

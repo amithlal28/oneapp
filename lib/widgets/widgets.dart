@@ -264,11 +264,11 @@ class MyHomeButton extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(80),
               gradient: const LinearGradient(
                   colors: [
-                    Color(0xff6E8DE9),
-                    Color(0xff464AD9),
+                    Color.fromARGB(255, 1, 3, 8),
+                    Color.fromARGB(255, 11, 118, 212),
                   ],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight

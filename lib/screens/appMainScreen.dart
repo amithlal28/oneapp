@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
-
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:favicon/favicon.dart';
 import 'package:flutter/cupertino.dart';
@@ -194,14 +194,42 @@ class _AppMainState extends State<AppMain> {
                   );
                 }
                 return Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: LinearProgressIndicator(
-                      minHeight: 20,
-                      color: Colors.green,
-                      backgroundColor: Colors.lightGreenAccent.withOpacity(0.2),
-                    ),
-                  ),
+                  child:ClipRRect(
+  borderRadius: BorderRadius.circular(10),
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      SizedBox(
+        height: 30,
+        width: double.infinity,
+        child: LiquidLinearProgressIndicator(
+          value: 0.5,
+          backgroundColor: Colors.white,
+          valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 15, 219, 66)),
+          borderColor: Colors.transparent,
+          borderWidth: 0.0,
+          borderRadius: 10,
+          direction: Axis.horizontal,
+          center: Text(
+            'Loading..',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+      SizedBox(height: 10),
+      Text(
+        'Please wait while we are loading your Mini-App',
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+    ],
+  ),
+),
                 );
               },
             )
@@ -254,7 +282,44 @@ class _AppMainState extends State<AppMain> {
 
     if (dataChild.owner == "SuperSpecial") {
       if (dataChild.usedFeatures!.containsKey(user!.uid)) {
+        log("Hey"+dataChild.owner!);
+
         log(dataChild.usedFeatures!.toString());
+
+        if(dataChild.usedFeatures![user!.uid].length==0) {
+          return SizedBox(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+                  RichText(
+                    text: TextSpan(
+                      text: "No Features added.\n",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      children: [
+                        TextSpan(
+                          text:
+                          "Try adding features from customize.",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
         return ListView.builder(
           controller: scrollController,
           shrinkWrap: true,
@@ -277,6 +342,39 @@ class _AppMainState extends State<AppMain> {
               return SizedBox();
             }
           },
+        );
+      }
+      else{
+        return SizedBox(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                RichText(
+                  text: TextSpan(
+                    text: "No Features added.\n",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    children: [
+                      TextSpan(
+                        text:
+                        "Try adding features from customize.",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
         );
       }
     }

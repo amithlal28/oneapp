@@ -47,6 +47,9 @@ dependencies:
   flutter_inappwebview: ^5.7.2+3
   favicon: ^1.1.1
   percent_indicator: ^4.0.1
+  cached_network_image: ^3.2.3
+  google_fonts: ^4.0.4
+  liquid_progress_indicator: ^0.4.0
 
 dev_dependencies:
   flutter_test:

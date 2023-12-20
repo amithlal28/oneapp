@@ -1,10 +1,12 @@
 
 
 import 'dart:developer';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:one_app/screens/contact.dart';
 import 'package:one_app/screens/createApp.dart';
+import 'package:one_app/screens/help.dart';
 import 'package:one_app/screens/myApps.dart';
 import 'package:one_app/screens/store.dart';
 import 'package:one_app/screens/welcome.dart';
@@ -88,7 +90,88 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      drawer: const Drawer(),
+      drawer: Drawer(
+        child: Column(
+          children: [
+            DrawerHeader(
+                child: Image.asset(
+                  "assets/images/logo.png"
+                )
+            ),
+            const Divider(
+              color: Colors.black,
+              height: 2,
+            ),
+            ListTile(
+              title: Text(
+                "Help",
+                style: TextStyle(
+                  fontSize: 20
+                ),
+              ),
+              onTap: (){
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (BuildContext context)=>Help())
+                );
+              },
+            ),
+            ListTile(
+              title: Text(
+                "Contact Us",
+                style: TextStyle(
+                    fontSize: 20
+                ),
+              ),
+              onTap: (){
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (BuildContext context)=>Contact())
+                );
+              },
+            ),
+            ListTile(
+              title: Text(
+                "Sign Out",
+                style: TextStyle(
+                    fontSize: 20
+                ),
+              ),
+              onTap: (){
+                showAlertDialog1(
+                  context: context,
+                  title: "Sign Out",
+                  content: "Are you sure to sign out?",
+                  noButton: () {
+                    Navigator.of(context).pop();
+                  },
+                  yesButton: () {
+                    Navigator.of(context).pop();
+                    showLoaderDialog(context);
+                    authMethods.signOut().then((value) {
+                      user=null;
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                              const Welcome()),
+                              (Route<dynamic> route) => false);
+                    });
+                  },
+                );
+              },
+            ),
+            Spacer(),
+            ListTile(
+              title: Center(
+                child: Text(
+                  "App Version: 1.0.5",
+                  style: TextStyle(
+                      fontSize: 18
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton (
         backgroundColor: const Color(0xff1a1818),
         onPressed: (){
@@ -177,7 +260,7 @@ class _HomeState extends State<Home> {
                       }).toList(),
                     );
                   }
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       color: Colors.white,
                     ),
@@ -202,11 +285,11 @@ class _HomeState extends State<Home> {
           height: screenHeight(context, mulBy: 0.05),
         ),
         Text(
-          "Hai!\n${user!.displayName!.split(" ")[0]}",
-          style: const TextStyle(
-            color: Color(0xff6857D7),
-            fontSize: 30,
-            fontWeight: FontWeight.bold
+          "Welcome \n${user!.displayName!.split(" ")[0]} !",
+          style: GoogleFonts.lato(
+                  fontStyle: FontStyle.italic,
+                  color: Color.fromRGBO(255, 255, 255, 1),
+                  fontSize: 40,
           ),
         ),
         SizedBox(
